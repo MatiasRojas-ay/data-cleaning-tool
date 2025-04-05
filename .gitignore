@@ -1,0 +1,16 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+
+# Node
+frontend/node_modules/
+frontend/dist/
+
+# Entornos
+.env
+*.env
+
+# Archivos temporales
+*.log
+*.sqlite3
