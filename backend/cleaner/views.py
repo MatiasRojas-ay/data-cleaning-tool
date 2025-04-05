@@ -34,6 +34,7 @@ class CleanFileView(APIView):
             exported_file = export_dataframe(df, export_format)
 
         except Exception as e:
+            print("💥 Error interno:", str(e))  # ⬅️ esto te dirá si algo se rompe en cleaning/exporting
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
         # 4. Enviar archivo como respuesta

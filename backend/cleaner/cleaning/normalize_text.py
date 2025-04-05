@@ -12,4 +12,8 @@ def normalize_text(df: pd.DataFrame) -> pd.DataFrame:
             return "".join([c for c in nfkd_form if not unicodedata.combining(c)]).lower()
         return s
 
-    return df.applymap(normalize_string)
+    for col in df.columns:
+        if df[col].dtype == object:
+            df[col] = df[col].map(normalize_string)
+
+    return df

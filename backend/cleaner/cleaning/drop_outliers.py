@@ -1,11 +1,17 @@
 import pandas as pd
-import numpy as np
 
-def drop_outliers(df: pd.DataFrame, z_thresh=3) -> pd.DataFrame:
-    """
-    Elimina outliers usando z-score (sólo columnas numéricas).
-    """
-    numeric_df = df.select_dtypes(include=[np.number])
-    z_scores = ((numeric_df - numeric_df.mean()) / numeric_df.std()).abs()
-    mask = (z_scores < z_thresh).all(axis=1)
+def drop_outliers(df: pd.DataFrame) -> pd.DataFrame:
+    numeric_cols = df.select_dtypes(include="number")
+    if numeric_cols.empty:
+        return df
+
+    mask = pd.Series([True] * len(df))
+    for col in numeric_cols:
+        Q1 = df[col].quantile(0.25)
+        Q3 = df[col].quantile(0.75)
+        IQR = Q3 - Q1
+        lower = Q1 - 1.5 * IQR
+        upper = Q3 + 1.5 * IQR
+        mask &= df[col].between(lower, upper)
+
     return df[mask]

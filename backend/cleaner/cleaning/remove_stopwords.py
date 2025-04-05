@@ -1,9 +1,13 @@
 import pandas as pd
-from nltk.corpus import stopwords
 import nltk
+from nltk.corpus import stopwords
 
-nltk.download('stopwords')
-stop_words = set(stopwords.words('spanish')) | set(stopwords.words('english'))
+# Descargar solo si no están disponibles
+try:
+    stop_words = set(stopwords.words("spanish")) | set(stopwords.words("english"))
+except LookupError:
+    nltk.download("stopwords")
+    stop_words = set(stopwords.words("spanish")) | set(stopwords.words("english"))
 
 def remove_stopwords(df: pd.DataFrame) -> pd.DataFrame:
     """
@@ -13,5 +17,8 @@ def remove_stopwords(df: pd.DataFrame) -> pd.DataFrame:
         if not isinstance(s, str):
             return s
         return " ".join([word for word in s.split() if word.lower() not in stop_words])
-    
-    return df.applymap(clean_text)
+
+    for col in df.columns:
+        if df[col].dtype == object:
+            df[col] = df[col].map(clean_text)
+    return df
